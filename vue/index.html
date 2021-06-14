@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      table {
+        margin-left: auto;
+        margin-right: auto;
+      }
+      ul {
+        list-style-type: none;
+      }
+      #cart {
+        position: fixed;
+        z-index: 20;
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+      integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+      crossorigin="anonymous"
+    />
+    <title>ECom</title>
+  </head>
+  <body>
+    <div id="app">
+      <div id="cart" class="card" style="width: 18rem">
+        <div class="card-header">Cart</div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item" v-for="entry in cart">
+            {{entry.name+" x "+entry.qty+" = "+entry.totalPrice}}
+          </li>
+        </ul>
+      </div>
+      <table>
+        <tr v-for="product in products">
+          <td>
+            <div class="card" style="width: 18rem">
+              <img
+                class="card-img-top"
+                v-if="product.img!=''"
+                :src="product.img"
+                alt="Card image cap"
+              />
+              <div class="card-body">
+                <h5 class="display-1">{{product.name}}</h5>
+                <p class="card-text" v-if="product.qty>0">
+                  {{product.qty+" left"}}
+                </p>
+                <p class="card-text" v-else>[Out of Stock]</p>
+                <p class="card-text">{{"Price: "+product.price}}</p>
+                <button class="btn btn-primary" v-on:click="addToCart(product)">
+                  Add to cart
+                </button>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <script src="https://unpkg.com/vue@next"></script>
+    <script>
+      const Obj = {
+        data() {
+          return {
+            addToCart(product) {
+              console.log(product + " added to cart");
+              if (product.qty == 0) {
+                alert("Out of Stock");
+                return;
+              }
+              if (this.cart[product.name] == undefined) {
+                this.cart[product.name] = {
+                  name: product.name,
+                  qty: 1,
+                  totalPrice: product.price,
+                };
+              } else {
+                let newQty = this.cart[product.name].qty + 1;
+                this.cart[product.name] = {
+                  name: product.name,
+                  qty: newQty,
+                  totalPrice: newQty * product.price,
+                };
+              }
+              product.qty -= 1;
+              console.log("Cart: " + JSON.stringify(this.cart));
+            },
+            cart: {},
+            products: [
+              {
+                name: "Socks",
+                qty: 50,
+                price: 100,
+                img: "https://picsum.photos/id/120/200",
+              },
+              {
+                name: "Shoes",
+                qty: 30,
+                price: 1280,
+                img: "https://picsum.photos/id/121/200",
+              },
+              {
+                name: "Shirts",
+                qty: 0,
+                price: 800,
+                img: "https://picsum.photos/id/122/200",
+              },
+              {
+                name: "Pants",
+                qty: 10,
+                price: 670,
+                img: "https://picsum.photos/id/123/200",
+              },
+            ],
+          };
+        },
+      };
+      Vue.createApp(Obj).mount("#app");
+    </script>
+  </body>
+</html>
